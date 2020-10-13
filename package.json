@@ -1,0 +1,24 @@
+{
+  "name": "reviews-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Team-Broken-Spoke/reviews-api.git"
+  },
+  "keywords": [],
+  "author": "Leslie Crunkilton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Team-Broken-Spoke/reviews-api/issues"
+  },
+  "homepage": "https://github.com/Team-Broken-Spoke/reviews-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.6.2"
+  }
+}
