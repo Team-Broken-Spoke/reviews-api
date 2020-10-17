@@ -1,12 +1,5 @@
-const csv = require('csvtojson')
 const fs = require('fs');
 const readline = require('readline');
-
-
-// to convert csv to JSON:
-// let writeStream = fs.createWriteStream('../data-csvs/fullData.json');
-// let readStream = fs.createReadStream('../data-csvs/reviews.csv')
-// readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);
 
 
 let writeStream = fs.createWriteStream('../data-csvs/fullConvertedData.json');
@@ -34,7 +27,6 @@ let obj = {
 }
 
 const processRecord = (data) => {
-  // writeStream.write(data.summary)
   if(data.product_id !== currentId) {
     obj["results"].push(reviewDetails(data));
     writeStream.write(JSON.stringify(obj))
@@ -44,10 +36,12 @@ const processRecord = (data) => {
     obj["results"].push(reviewDetails(data));
   }
 }
-// read line-by-line
+
+// read data line-by-line
 const readInterface = readline.createInterface({
   input: readStream
 });
+
 readInterface.on('line', (line) => {
   line = line.trim();
 
