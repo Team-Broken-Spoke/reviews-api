@@ -21,19 +21,19 @@ const reviewDetails = (review) => {
 }
 
 let currentId = "1";
-let obj = {
+let reviewObj= {
   "product_id" : "1",
   "results": []
 }
 
 const processRecord = (data) => {
-  if(data.product_id !== currentId) {
-    obj["results"].push(reviewDetails(data));
-    writeStream.write(JSON.stringify(obj))
-    obj = { "product_id": data.product_id, "results": [] }
-    currentId = data.product_id;
+  if(data.product_id === currentId) {
+    reviewObj["results"].push(reviewDetails(data));
   } else {
-    obj["results"].push(reviewDetails(data));
+    writeStream.write(JSON.stringify(reviewObj));
+    reviewObj = { "product_id": data.product_id, "results": [] };
+    currentId = data.product_id;
+    reviewObj["results"].push(reviewDetails(data));
   }
 }
 
