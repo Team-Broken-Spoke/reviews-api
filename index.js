@@ -26,10 +26,8 @@ MongoClient
     )
   }
 
-
   app.get('/reviews/:productId', (req, res) => {
     const collection = db.collection('all-reviews');
-
     collection.findOne({product_id: req.params.productId})
       .then((response) => {
         res.send(response)
@@ -37,6 +35,7 @@ MongoClient
       .catch(error => {
         console.error(error);
       })
+
   });
 
   /*
@@ -51,7 +50,7 @@ MongoClient
   */
 
   app.post('/reviews/:productId', (req, res) => {
-    const collection = db.collection('tester');
+    const collection = db.collection('all-reviews');
     getNextSequenceValue('reviewid')
       .then((doc) => {
         collection.updateOne (
@@ -79,3 +78,8 @@ MongoClient
         console.error(error)
       })
   })
+
+  // TODO:
+  // add response query
+  // get characteristics for product
+  // get characteristic reviews
