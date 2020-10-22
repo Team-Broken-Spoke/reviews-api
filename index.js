@@ -28,12 +28,12 @@ MongoClient
 
   app.get('/reviews/:productId', (req, res) => {
     const collection = db.collection('all-reviews');
-    collection.findOne({product_id: req.params.productId})
+    collection.findOne({ product_id: req.params.productId })
       .then((response) => {
         res.send(response)
       })
       .catch(error => {
-        console.error(error);
+        console.error(`Error getting reviews for product id: ${req.params.productId}. Error: ${error}`);
       })
 
   });
@@ -72,14 +72,32 @@ MongoClient
           })
       })
       .then(() => {
-        res.send('success!')
+        res.send('successfully posted review.')
       })
       .catch(error => {
-        console.error(error)
+        console.error(`Error posting a review to product id: ${req.params.productId}. Error: ${error}`)
+      })
+  })
+
+  /*
+    Request body should look like this:
+    { "response": "The response."}
+  */
+
+  app.post('/responses/:reviewId', (req, res) => {
+    const collection = db.collection('all-reviews');
+    collection.updateOne(
+      { 'results.review_id': req.params.reviewId  },
+      { $set: { "results.$.response": req.body.response } }
+    )
+      .then(() => {
+        res.send(`Successfully added your response to review id: ${req.params.reviewId}`)
+      })
+      .catch(error => {
+        console.error(`Error posting a response to review: ${req.params.reviewId}. Error: ${error}`);
       })
   })
 
   // TODO:
-  // add response query
   // get characteristics for product
-  // get characteristic reviews
+  // get characteristic reviews (average)
