@@ -26,6 +26,7 @@ MongoClient
     )
   }
 
+  // use aggregation commands to get data from all-reviews and characteristic-reviews
   app.get('/reviews/:productId', (req, res) => {
     const collection = db.collection('all-reviews');
     collection.findOne({ product_id: req.params.productId })
@@ -37,6 +38,37 @@ MongoClient
       })
 
   });
+
+  // app.get('/reviews/:productId', (req, res) => {
+  //   const collection = db.collection('all-reviews');
+  //   const charcollection = db.collection('characteristic-reviews');
+  //   let responseObj = {
+  //     reviews: {},
+  //     characteristics: []
+  //   }
+  //   collection.findOne({ product_id: req.params.productId })
+  //     .then((response) => {
+  //       response.results.forEach(result => {
+  //         charcollection.findOne({ review_id: result.review_id })
+  //           .then(document => {
+  //             responseObj.characteristics.push(document)
+  //           })
+  //           .catch(err => {
+  //             console.error(err)
+  //           })
+  //       })
+  //       responseObj.reviews = response;
+  //       return responseObj;
+  //     })
+  //     .then((obj) => {
+  //       res.send(obj)
+  //     })
+
+  //     .catch(error => {
+  //       console.error(`Error getting reviews for product id: ${req.params.productId}. Error: ${error}`);
+  //     })
+
+  // });
 
   /*
     Request body should look like this:
@@ -84,7 +116,7 @@ MongoClient
     { "response": "The response."}
   */
 
-  app.post('/responses/:reviewId', (req, res) => {
+  app.post('reviews/responses/:reviewId', (req, res) => {
     const collection = db.collection('all-reviews');
     collection.updateOne(
       { 'results.review_id': req.params.reviewId  },
@@ -97,6 +129,16 @@ MongoClient
         console.error(`Error posting a response to review: ${req.params.reviewId}. Error: ${error}`);
       })
   })
+
+  // app.get('reviews/:productId/characteristics', (req, res) => {
+  //   // get
+  //   .then(() => {
+
+  //   })
+  //   .catch(() => {
+
+  //   })
+  // })
 
   // TODO:
   // get characteristics for product
