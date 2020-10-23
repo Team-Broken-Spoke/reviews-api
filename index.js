@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const axios = require('axios');
 const { MongoClient } = require('mongodb');
 const url = "mongodb://localhost:27017";
 const port = 3000;
@@ -26,49 +27,78 @@ MongoClient
     )
   }
 
-  // use aggregation commands to get data from all-reviews and characteristic-reviews
   app.get('/reviews/:productId', (req, res) => {
     const collection = db.collection('all-reviews');
     collection.findOne({ product_id: req.params.productId })
-      .then((response) => {
+      .then(response => {
         res.send(response)
       })
       .catch(error => {
         console.error(`Error getting reviews for product id: ${req.params.productId}. Error: ${error}`);
       })
-
   });
 
+  app.get('/reviews/:productId/characteristics', (req, res) => {
+    const collection = db.collection('characteristicsByProduct');
+    collection.findOne({ product_id: req.params.productId })
+      .then(response => {
+        res.send(response)
+      })
+      .catch(error => {
+        console.error(`Error getting characteristics for product id: ${req.params.productId}. Error: ${error}`)
+      })
+  })
+
+  app.get('/reviews/:productId/characteristic-reviews', (req, res) => {
+    const collection = db.collection('characteristic-reviews');
+    let ids = [];
+    let results = [];
+
+    axios.get(`http://localhost:3000/reviews/${req.params.productId}`)
+      .then(response => {
+        response.data.results.forEach(item => {
+          ids.push(item.review_id)
+        })
+      })
+      .then(() => {
+        (async function() {
+          let cursor = collection.find({
+            review_id:{"$in":ids}
+          })
+          await cursor.forEach(item => results.push(item))
+        })().then(() => res.send(results))
+      })
+      .catch(error => {
+        console.error(error)
+      })
+
+  })
+
+  // gets data from all-reviews and characteristic-reviews. took 4.29 s
   // app.get('/reviews/:productId', (req, res) => {
   //   const collection = db.collection('all-reviews');
-  //   const charcollection = db.collection('characteristic-reviews');
-  //   let responseObj = {
-  //     reviews: {},
-  //     characteristics: []
+  //   let arr = [];
+  //   async function getReviewData() {
+  //     const agg = collection.aggregate([
+  //       { $match : { product_id : req.params.productId } },
+  //       {
+  //         $lookup:
+  //           {
+  //             from: "characteristic-reviews",
+  //             localField: "results.review_id",
+  //             foreignField: "review_id",
+  //             as: "characteristics"
+  //           }
+  //       }
+  //     ])
+  //     await agg.forEach(item => {
+  //       arr.push(item);
+  //     })
   //   }
-  //   collection.findOne({ product_id: req.params.productId })
-  //     .then((response) => {
-  //       response.results.forEach(result => {
-  //         charcollection.findOne({ review_id: result.review_id })
-  //           .then(document => {
-  //             responseObj.characteristics.push(document)
-  //           })
-  //           .catch(err => {
-  //             console.error(err)
-  //           })
-  //       })
-  //       responseObj.reviews = response;
-  //       return responseObj;
-  //     })
-  //     .then((obj) => {
-  //       res.send(obj)
-  //     })
-
-  //     .catch(error => {
-  //       console.error(`Error getting reviews for product id: ${req.params.productId}. Error: ${error}`);
-  //     })
-
-  // });
+  //   getReviewData().then(() => {
+  //     res.send(arr)
+  //   })
+  // })
 
   /*
     Request body should look like this:
@@ -130,16 +160,7 @@ MongoClient
       })
   })
 
-  // app.get('reviews/:productId/characteristics', (req, res) => {
-  //   // get
-  //   .then(() => {
 
-  //   })
-  //   .catch(() => {
-
-  //   })
-  // })
 
   // TODO:
-  // get characteristics for product
   // get characteristic reviews (average)

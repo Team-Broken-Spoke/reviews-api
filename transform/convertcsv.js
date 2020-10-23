@@ -13,6 +13,10 @@ const fs = require('fs');
 // readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);
 
 // convert characteristic_reviews csv to json
-let writeStream = fs.createWriteStream('../data-csvs/characteristic_reviews.json');
-let readStream = fs.createReadStream('../data-csvs/characteristic_reviews.csv')
+// let writeStream = fs.createWriteStream('../data-csvs/characteristic_reviews.json');
+// let readStream = fs.createReadStream('../data-csvs/characteristic_reviews.csv')
+// readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);
+
+let writeStream = fs.createWriteStream('../data-csvs/characteristics.json');
+let readStream = fs.createReadStream('../data-csvs/characteristics.csv')
 readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);
