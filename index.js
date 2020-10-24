@@ -51,54 +51,38 @@ MongoClient
 
   app.get('/reviews/:productId/characteristic-reviews', (req, res) => {
     const collection = db.collection('characteristic-reviews');
-    let ids = [];
+    const allReviews = db.collection('all-reviews');
     let results = [];
+    let total = 0;
 
-    axios.get(`http://localhost:3000/reviews/${req.params.productId}`)
+    allReviews.findOne({ product_id: req.params.productId })
       .then(response => {
-        response.data.results.forEach(item => {
-          ids.push(item.review_id)
+        total = response.results.length;
+        response.results.forEach(result => {
+          let promise = new Promise((resolve, reject) => {
+
+            collection.findOne({ review_id: result.review_id })
+              .then(response => {
+                resolve(response)
+              })
+              .catch(err => {
+                reject(err)
+              })
+
+          })
+          promise.then(data => {
+            results.push(data)
+            if(results.length === total) {
+              res.send(results)
+            }
+            res.send(results)
+          })
+          promise.catch(err => {
+            console.error(err)
+          })
         })
       })
-      .then(() => {
-        (async function() {
-          let cursor = collection.find({
-            review_id:{"$in":ids}
-          })
-          await cursor.forEach(item => results.push(item))
-        })().then(() => res.send(results))
-      })
-      .catch(error => {
-        console.error(error)
-      })
-
   })
-
-  // gets data from all-reviews and characteristic-reviews. took 4.29 s
-  // app.get('/reviews/:productId', (req, res) => {
-  //   const collection = db.collection('all-reviews');
-  //   let arr = [];
-  //   async function getReviewData() {
-  //     const agg = collection.aggregate([
-  //       { $match : { product_id : req.params.productId } },
-  //       {
-  //         $lookup:
-  //           {
-  //             from: "characteristic-reviews",
-  //             localField: "results.review_id",
-  //             foreignField: "review_id",
-  //             as: "characteristics"
-  //           }
-  //       }
-  //     ])
-  //     await agg.forEach(item => {
-  //       arr.push(item);
-  //     })
-  //   }
-  //   getReviewData().then(() => {
-  //     res.send(arr)
-  //   })
-  // })
 
   /*
     Request body should look like this:
