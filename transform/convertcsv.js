@@ -17,6 +17,7 @@ const fs = require('fs');
 // let readStream = fs.createReadStream('../data-csvs/characteristic_reviews.csv')
 // readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);
 
+// convert characteristics csv to json
 let writeStream = fs.createWriteStream('../data-csvs/characteristics.json');
 let readStream = fs.createReadStream('../data-csvs/characteristics.csv')
 readStream.pipe(csv({downstreamFormat: 'array'})).pipe(writeStream);

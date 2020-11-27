@@ -34,7 +34,8 @@ MongoClient
         res.send(response)
       })
       .catch(error => {
-        console.error(`Error getting reviews for product id: ${req.params.productId}. Error: ${error}`);
+        console.error(`Error getting reviews for product id:
+          ${req.params.productId}. Error: ${error}`);
       })
   });
 
@@ -45,7 +46,8 @@ MongoClient
         res.send(response)
       })
       .catch(error => {
-        console.error(`Error getting characteristics for product id: ${req.params.productId}. Error: ${error}`)
+        console.error(`Error getting characteristics for product id:
+          ${req.params.productId}. Error: ${error}`)
       })
   })
 
@@ -84,17 +86,6 @@ MongoClient
       })
   })
 
-  /*
-    Request body should look like this:
-    {
-      "rating": "5",
-      "summary": "A good product",
-      "recommend": "true",
-      "body": "I do not regret this purchase",
-      "reviewer_name": "Name",
-    }
-  */
-
   app.post('/reviews/:productId', (req, res) => {
     const collection = db.collection('all-reviews');
     getNextSequenceValue('reviewid')
@@ -125,11 +116,6 @@ MongoClient
       })
   })
 
-  /*
-    Request body should look like this:
-    { "response": "The response."}
-  */
-
   app.post('reviews/responses/:reviewId', (req, res) => {
     const collection = db.collection('all-reviews');
     collection.updateOne(
@@ -143,8 +129,3 @@ MongoClient
         console.error(`Error posting a response to review: ${req.params.reviewId}. Error: ${error}`);
       })
   })
-
-
-
-  // TODO:
-  // get characteristic reviews (average)
